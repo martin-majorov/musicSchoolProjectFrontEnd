@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Catamaran:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fbfcfd;
+}
+
+header h1 {
+    font-family: 'Roboto';
+    font-weight: 300;
+    font-size: 30px;
+}
+
+header, footer {
+    font-family: 'Roboto';
+    font-size: 15px;
+    color: gray;
+    background-color: #deefed;
+    text-align: center;
+    border-radius: 10px;
+    margin: 30px;
+    padding: 20px 0px;
+}
+
+@media only screen and (max-width: 700px) {
+      header h1 {
+        font-size: 20px;
+    }
+}
