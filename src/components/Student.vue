@@ -3,11 +3,15 @@
     <table>
         <tr>
             <td>
-                <button class="menu-button" @click="$emit('studentInfo', student)">{{ student.name }} {{student.surname}}</button>
-                <component v-bind:is="this.currentTab"></component>
+                <component  v-bind:is="this.currentTab"
+                            v-bind:student="this.student"
+                            v-on:nameEdited="setName"
+                            v-on:studentInfo="$emit('studentInfo', student)"
+                            v-on:editStudent="sendEditedName"
+                ></component>
             </td>
             <td class="table-right">
-                <button class="menu-button" @click="$emit('editStudent', student.id)">
+                <button class="menu-button">
                     <font-awesome-icon icon="pencil-alt" @click="setEdit"/>
                 </button>
                 <button class="menu-button" @click="$emit('deleteStudent', student.id)">
@@ -32,14 +36,22 @@ export default {
     },
     props: ["student"],
     methods: {
+
+        setName: function() {
+            this.currentTab = 'StudentName'
+        },
+
         setEdit: function() {
             this.currentTab = 'StudentEdit'
+        },
+
+        sendEditedName: function(newNameObj) {
+            this.$emit('editStudent', newNameObj);
         }
     },
     data() {
         return {
-            currentTab: 'student',
-
+            currentTab: 'StudentName'
         }
     }
     
