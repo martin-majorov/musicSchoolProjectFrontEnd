@@ -29,6 +29,7 @@
         v-bind:newPayment="newPayment"
         v-bind:newLesson="newLesson"
         v-bind:warningMessage="warningMessage"
+        v-bind:successfulMessage="successfulMessage"
         v-bind:allLessons="allLessons"
         v-bind:allPayments="allPayments"
         v-on:editStudent="editStudent"
@@ -70,6 +71,10 @@ export default {
           switch: false,
           text: ''
         },
+        successfulMessage: {
+          switch: false,
+          text: ''
+        },
       windowProperties: {
         showAddLesson: false,
         showSearch: false,
@@ -103,8 +108,48 @@ export default {
         this.getStudentInfo();
     },
 
-    editStudent: async function(studentId){
-      console.log('studid ' + studentId)
+    editStudent: async function(newNameObj){
+
+      // splits the incoming object with full name string and ID to separate name surname array.
+      const newName = newNameObj.newName.split(" ");
+
+      //validates if name has no special characters 
+      let validateName = newName[0].match(/[0-9$-/:-?{-~!"^_`\s+]/gi);
+      let validateSurname = newName[1].match(/[0-9$-/:-?{-~!"^_`\s+]/gi);
+
+      //triggers an error string if name or surname has special characters or name has no name or surname
+      if(validateName || validateSurname || newName.length != 2) {
+        this.warningMessage.text = "You cannot use special character (!@#$%^&*()_/*-) or numbers for name! Full name must consist of two words."
+        this.warningMessage.switch = true;
+      } else {
+
+        //updates local name object
+        this.currentStudentsList.forEach(student => {
+          if(student.id === newNameObj.id) {
+            student.name = newName[0].trim();
+            student.surname = newName[1].trim();
+          }
+        })
+
+        //updates database
+        const data = {
+          student: {
+            name: newName[0],
+            surname: newName[1]
+          }
+        }
+        
+        const url = `http://localhost:3000/students/${newNameObj.id}/editname`;
+
+        const method = {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        }
+
+        fetch(url, method).then(res => res.json());
+
+      }
       
     },
 
