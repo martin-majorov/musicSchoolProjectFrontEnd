@@ -4,13 +4,14 @@
         <h2>Search Results <span class="span-title">(press to clear)</span></h2> 
     </button>
     <WarningMessage v-if="this.warningMessage.switch" v-bind:warningMessage="this.warningMessage.text" />
+    <SuccessfulMessage v-if="this.successfulMessage.switch" v-bind:successfulMessage="this.successfulMessage.text"/>
     <StudentNotFound v-bind:key="name" v-for="name in notFoundStudents" v-bind:name="name"></StudentNotFound>
     <GetFullName v-if="this.windowProperties.getFullName" />
     <div v-bind:key="student.id" v-for="student in this.currentStudentsList">
         <Student v-bind:student="student" 
                  @deleteStudent="$emit('deleteStudent', student.id)"
                  @studentInfo="$emit('studentInfo', student)"
-                 @editStudent="$emit('editStudent', student.id)"/>
+                 @editStudent="sendEditedName"/>
     </div>
     <div v-bind:key="payment.id" v-for="payment in this.allPayments">
         <Payment v-bind:payment="payment"
@@ -58,6 +59,7 @@ import NewStudent from './NewStudent'
 import NewPayment from './NewPayment'
 import NewLesson from './NewLesson'
 import WarningMessage from './WarningMessage'
+import SuccessfulMessage from './SuccessfulMessage'
 
 export default {
     name: 'ResultWindow',
@@ -68,6 +70,7 @@ export default {
         NewStudent,
         NewPayment,
         WarningMessage,
+        SuccessfulMessage,
         NewLesson,
         Student,
         Lesson,
@@ -83,10 +86,16 @@ export default {
         'newPayment',
         'newLesson',
         'warningMessage',
+        'successfulMessage',
         'clearResults',
         'allLessons',
         'allPayments'
-    ]
+    ],
+    methods: {
+        sendEditedName: function(newNameObj) {
+            this.$emit('editStudent', newNameObj);
+        }
+    }
 }
 </script>
 

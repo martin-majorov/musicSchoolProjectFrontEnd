@@ -4,6 +4,9 @@
 
 <script>
 export default {
-    name: "StudentName"
+    name: "StudentName",
+    props: [
+        'student'
+    ]
 }
 </script>
