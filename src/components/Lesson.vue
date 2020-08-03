@@ -10,6 +10,7 @@
             <component  v-bind:is="currentTab"
                         v-bind:lesson="lesson"
                         @editedLesson="updateLesson"
+                        @deleteLesson="$emit('deleteLesson', lesson.id)"
             />
         </table>
     </div>
