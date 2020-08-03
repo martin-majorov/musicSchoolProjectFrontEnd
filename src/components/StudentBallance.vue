@@ -38,7 +38,7 @@ export default {
 <style>
 
 .background-green {
-        background-color: #c09669;
+        background-color: #4a9396;
     }
 
 .student-form-names {

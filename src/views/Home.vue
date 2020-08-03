@@ -37,6 +37,8 @@
         v-on:deletePayment="deletePayment"
         v-on:deleteLesson="deleteLesson"
         v-on:studentInfo="callStudentInfo"
+        v-on:updatePayment="updatePayment"
+        v-on:updateLesson="updateLesson"
     />
   </div>
 </template>
@@ -108,6 +110,108 @@ export default {
         this.getStudentInfo();
     },
 
+    updatePayment: async function(payment) {
+      const newPaymentAmount = payment.editedAmount;
+      const newPaymentDate = payment.editedDate;
+      const paymentId = payment.id;
+
+      // validates if amount consists of numbers
+      let validateAmount = String(newPaymentAmount).match(/\D/gi);
+      // validates if name has no special characters
+      let validateDate = newPaymentDate.match(/[$-,:.-/:-?{-~!"^_`\s+]/gi);
+      // validates if date is in apropriate format YYYY-MM-DD
+      let validateDateFormat = newPaymentDate.match(/\d{4}-\d{2}-\d{2}/);
+
+      if(!newPaymentAmount || !newPaymentDate || !paymentId || validateAmount || validateDate) {
+        this.warningMessage.text = "Cannot use special character (!@#$%^&*()_/*-) for name or date";
+        this.warningMessage.switch = true;
+      } else if(!validateDateFormat) {
+        this.warningMessage.text = "Please use following format for the date: YYYY-MM-DD";
+        this.warningMessage.switch = true;
+      } else {
+
+        // if validation is passed, updates local payment object
+        this.allPayments.forEach(payment => {
+          if(payment.id === paymentId) {
+            payment.date = newPaymentDate.trim();
+            payment.payment_amount = Number(newPaymentAmount);
+          }
+        })
+        
+        // if validation is passed, updates the database payment record
+        // data object for update request
+        const data = {
+          payment: {
+            date: newPaymentDate,
+            payment_amount: Number(newPaymentAmount)
+          }
+        }
+        //update url
+        const url = `http://localhost:3000/payments/${paymentId}`;
+
+
+        //update method
+        const method = {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        }
+
+        fetch(url, method);
+
+      }
+    },
+
+    updateLesson: async function(lesson) {
+      const newLessonLength = lesson.lessonLength;
+      const newLessonDate = lesson.lessonDate;
+      const lessonId = lesson.id;
+
+      // validates if lesson length is a number
+      let validateLength = String(newLessonLength).match(/\D/gi);
+      // validates if name has no special characters
+      let validateDate = newLessonDate.match(/[$-,:.-/:-?{-~!"^_`\s+]/gi);
+      // validates if date is in apropriate format YYYY-MM-DD
+      let validateDateFormat = newLessonDate.match(/\d{4}-\d{2}-\d{2}/);
+
+      if(!newLessonLength || !newLessonDate || !lessonId || validateLength || validateDate) {
+        this.warningMessage.text = "Cannot use special character (!@#$%^&*()_/*-) for lesson length or date";
+        this.warningMessage.switch = true;
+      } else if(!validateDateFormat) {
+        this.warningMessage.text = "Please use following format for the date: YYYY-MM-DD";
+        this.warningMessage.switch = true;
+      } else {
+
+        // if validation is passed, updates local payment object
+        this.allLessons.forEach(lesson => {
+          if(lesson.id === lessonId) {
+            lesson.date = newLessonDate.trim();
+            lesson.lesson_length = Number(newLessonLength);
+          }
+        })
+
+        // data object for update request
+        const data = {
+          lesson: {
+            date: newLessonDate,
+            lesson_length: newLessonLength
+          }
+        }
+        //update url
+        const url = `http://localhost:3000/lessons/${lessonId}`;
+
+
+        //update method
+        const method = {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+        }
+
+        fetch(url, method);
+      }
+    },
+
     editStudent: async function(newNameObj){
 
       // splits the incoming object with full name string and ID to separate name surname array.
@@ -119,7 +223,7 @@ export default {
 
       //triggers an error string if name or surname has special characters or name has no name or surname
       if(validateName || validateSurname || newName.length != 2) {
-        this.warningMessage.text = "You cannot use special character (!@#$%^&*()_/*-) or numbers for name! Full name must consist of two words."
+        this.warningMessage.text = "Cannot use special character (!@#$%^&*()_/*-) or numbers for name! Full name must consist of two words."
         this.warningMessage.switch = true;
       } else {
 
