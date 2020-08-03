@@ -14,12 +14,16 @@
                  @editStudent="sendEditedName"/>
     </div>
     <div v-bind:key="payment.id" v-for="payment in this.allPayments">
-        <Payment v-bind:payment="payment"
-                    @deletePayment="$emit('deletePayment', payment.id)" />
+        <Payment    v-bind:payment="payment"
+                    @deletePayment="$emit('deletePayment', payment.id)"
+                    @updatePayment="updatePayment"
+         />
     </div>
     <div v-bind:key="lesson.id" v-for="lesson in this.allLessons">
         <Lesson v-bind:lesson="lesson" 
-                    @deleteLesson="$emit('deleteLesson', lesson.id)"/>
+                    @deleteLesson="$emit('deleteLesson', lesson.id)"
+                    @updateLesson="updateLesson"
+        />
     </div>
     <StudentBallance
                 v-bind:key="student.id"
@@ -94,6 +98,12 @@ export default {
     methods: {
         sendEditedName: function(newNameObj) {
             this.$emit('editStudent', newNameObj);
+        },
+        updatePayment: function(payment) {
+            this.$emit('updatePayment', payment);
+        },
+        updateLesson: function(lesson) {
+            this.$emit('updateLesson', lesson);
         }
     }
 }
@@ -104,7 +114,7 @@ export default {
     width:50%;
     font-family: 'Roboto', sans-serif;
     color: white;
-    background-color: #e0e5e6;
+    background-color: #cb7f07;
     border-radius: 10px;
     padding: 20px 20px;
 }
@@ -114,7 +124,7 @@ export default {
         width: auto;
         font-family: 'Roboto', sans-serif;
         color: white;
-        background-color: #e0e5e6;
+        background-color: #cb7f07;
         border-radius: 10px;
 
     }

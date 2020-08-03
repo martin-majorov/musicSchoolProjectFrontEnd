@@ -36,8 +36,16 @@
                         <div class="add-lesson-payment">
                             <label for="amount">Payment</label>
                             <select class="input" name="amount" id="payment-amount" v-model="amount" v-on:change="$emit('chosenAmount', amount)">
-                                <option value="15">15</option>
-                                <option value="20">20</option>
+                                <option value="15">15 Eur</option>
+                                <option value="20">20 Eur</option>
+                                <option value="25">25 Eur</option>
+                                <option value="30">30 Eur</option>
+                                <option value="35">35 Eur</option>
+                                <option value="40">40 Eur</option>
+                                <option value="45">45 Eur</option>
+                                <option value="50">50 Eur</option>
+                                <option value="55">55 Eur</option>
+                                <option value="60">60 Eur</option>
                             </select>
                         </div>
                     </div>
@@ -73,8 +81,8 @@
                     <input type="text" class="last-name" placeholder="Enter Last Name..." v-model="student.lastName" />
                     <label for="amount">Payment Rate</label>
                     <select class="input" name="rate" id="payment-amount" v-model="rate" v-on:change="$emit('chosenRate', rate)">
-                        <option value="15">15 Eur / Lesson </option>
-                        <option value="20">20 Eur / Lesson</option>
+                        <option value="15">15 Eur Eur / Lesson </option>
+                        <option value="20">20 Eur Eur / Lesson</option>
                     </select>
                     <div class="inline-buttons">
                         <button class="button" v-on:click="this.createStudent">Submit New Student</button>
@@ -162,7 +170,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    background-color: #e0e5e6;
+    background-color: #cb7f07;
     border-radius: 10px;
     padding: 20px 20px;
     margin: 0px 30px 0px 0px;
@@ -173,7 +181,7 @@ export default {
     font-family: 'Roboto', sans-serif;
     font-size: 1.03em;
     font-weight: 500;
-    background-color:#bec9ca;
+    background-color:#5f787b;
     margin-top: 0;
     margin-bottom: 30px;
     width: 160px;
@@ -189,7 +197,7 @@ export default {
         width: auto;
         display: flex;
         flex-direction: column;
-        background-color:#e0e5e6;
+        background-color:#cb7f07;
         border-radius: 10px;
         margin: 0px 0px 30px 0px;
     }
@@ -204,7 +212,7 @@ export default {
     display: flex;
     flex-direction: column;
     font-family: 'Roboto', sans-serif;
-    color: gray;
+    color: white;
 }
 
 
@@ -212,7 +220,7 @@ export default {
     font-family: 'Roboto', sans-serif;
     font-size: 1.03em;
     font-weight: 500;
-    background-color: #bec9ca;
+    background-color: #5f787b;
     margin-top: 30px;
     margin-right: 20px;
     width: 180px;
@@ -232,7 +240,7 @@ h2 {
     font-size: 17px;
     background: none;
     text-align: left;
-    color: grey;
+    color: white;
     border: 0;
     outline: 0;
 }
@@ -272,7 +280,7 @@ input, .input{
 option {
     font-family: 'Roboto', sans-serif;
     font-size: 1.0em;
-    padding-left: 20px;
+    padding: 5px;
 }
 
 .get-payment, .get-info, .create-student {
@@ -309,6 +317,8 @@ option {
 }
 
 .add-lesson-date {
+    display: flex;
+    flex-direction: column;
     margin-right: 30px;
 }
 

@@ -5,26 +5,45 @@
                 <td>Payment name</td>
                 <td>Payment amount</td>
                 <td>Student date</td>
-                <td><button class="menu-button"><font-awesome-icon icon="pencil-alt" /></button></td>
+                <td><button class="menu-button" @click="setDataEdit"><font-awesome-icon icon="pencil-alt" /></button></td>
             </tr>
-            <tr>
-                <td>{{payment.name}}</td>
-                <td>{{payment.payment_amount}} Eur</td>
-                <td>{{payment.date}}</td>
-                <td><button class="menu-button"><font-awesome-icon icon="trash-alt" 
-                            @click="$emit('deletePayment', payment.id)"
-                /></button></td>
-            </tr>
+            <component  v-bind:is="this.currentPaymentTab" 
+                        v-bind:payment="this.payment"
+                        @editedPayment="updatePayment"
+                        @deletePayment="$emit('deletePayment', payment.id)"
+            />
         </table>
     </div>
 </template>
 
 <script>
+
+import PaymentData from './PaymentData'
+import PaymentDataEdit from './PaymentDataEdit'
+
 export default {
     name: 'Payment',
+    components: {
+        PaymentData,
+        PaymentDataEdit
+    },
     props: [
         'payment'
-    ]
+    ],
+    methods: {
+        setDataEdit: function() {
+            this.currentPaymentTab = 'PaymentDataEdit'
+        },
+        updatePayment: function(payment) {
+            this.currentPaymentTab = 'PaymentData'
+            this.$emit('updatePayment', payment)
+        }
+    },
+    data() {
+        return {
+            currentPaymentTab: 'PaymentData'
+        }
+    }
 }
 </script>
 
