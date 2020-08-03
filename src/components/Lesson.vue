@@ -5,26 +5,43 @@
                 <td>Student name</td>
                 <td>Lesson date</td>
                 <td>Lesson length</td>
-                <td><button class="menu-button"><font-awesome-icon icon="pencil-alt" /></button></td>
+                <td><button class="menu-button" @click="setEditMode"><font-awesome-icon icon="pencil-alt" /></button></td>
             </tr>
-            <tr>
-                <td>{{lesson.name}}</td>
-                <td>{{lesson.date}}</td>
-                <td>{{lesson.lesson_length}} min</td>
-                <td><button class="menu-button"><font-awesome-icon icon="trash-alt" 
-                                                                    @click="$emit('deleteLesson', lesson.id)"
-                                                /></button></td>
-            </tr>
+            <component  v-bind:is="currentTab"
+                        v-bind:lesson="lesson"
+                        @editedLesson="updateLesson"
+            />
         </table>
     </div>
 </template>
 
 <script>
+import LessonData from './LessonData';
+import LessonDataEdit from './LessonDataEdit'
+
 export default {
     name: 'Lesson',
+    components: {
+        LessonData,
+        LessonDataEdit
+    },
     props: [
         'lesson'
-    ]
+    ],
+    methods: {
+        setEditMode: function() {
+            this.currentTab = 'LessonDataEdit'
+        },
+        updateLesson: function(lesson) {
+            this.currentTab = 'LessonData';
+            this.$emit('updateLesson', lesson)
+        }
+    },
+    data() {
+        return {
+            currentTab: 'LessonData'
+        }
+    }
 }
 </script>
 
