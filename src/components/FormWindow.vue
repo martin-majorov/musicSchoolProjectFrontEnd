@@ -146,13 +146,13 @@ export default {
 
     // shows all students in the database by  array to the array to be viewed
         getAllStudentsList: async function () {
-            const response = await fetch('http://localhost:3000/students')
+            const response = await fetch('https://mspdeployment.ew.r.appspot.com/students')
                 .then(res => res.json());
 
             if (this.currentStudentsList.length === 0) {
                 response.students.forEach(student => {
                     this.currentStudentsList.push({
-                        id: student.id,
+                        id: student.id, // edit student._id key for MongoDB. For SQLite backend use student.id
                         name: student.name,
                         surname: student.surname
                     });
