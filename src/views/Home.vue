@@ -147,7 +147,7 @@ export default {
           }
         }
         //update url
-        const url = `http://localhost:3000/payments/${paymentId}`;
+        const url = `https://mspdeployment.ew.r.appspot.com/payments/${paymentId}`;
 
 
         //update method
@@ -198,7 +198,7 @@ export default {
           }
         }
         //update url
-        const url = `http://localhost:3000/lessons/${lessonId}`;
+        const url = `https://mspdeployment.ew.r.appspot.com/lessons/${lessonId}`;
 
 
         //update method
@@ -243,7 +243,7 @@ export default {
           }
         }
         
-        const url = `http://localhost:3000/students/${newNameObj.id}/editname`;
+        const url = `https://mspdeployment.ew.r.appspot.com/students/${newNameObj.id}/editname`;
 
         const method = {
           method: 'PUT',
@@ -258,7 +258,7 @@ export default {
     },
 
     deleteStudent: async function(id) {
-      const url = `http://localhost:3000/students/${id}`;
+      const url = `https://mspdeployment.ew.r.appspot.com/students/${id}`;
       const method = {
           method: 'DELETE',
         };
@@ -270,7 +270,7 @@ export default {
     },
 
     deletePayment: async function(id) {
-      const url = `http://localhost:3000/payments/${id}`;
+      const url = `https://mspdeployment.ew.r.appspot.com/payments/${id}`;
       const method = {
           method: 'DELETE',
         };
@@ -281,7 +281,7 @@ export default {
     },
     
     deleteLesson: async function(id) {
-      const url = `http://localhost:3000/lessons/${id}`;
+      const url = `https://mspdeployment.ew.r.appspot.com/lessons/${id}`;
       const method = {
           method: 'DELETE',
         };
@@ -325,7 +325,7 @@ export default {
     checkDublicateStudent: async function () {
       const name = this.student.firstName;
       const surname = this.student.lastName;
-      return await fetch(`http://localhost:3000/name?name=${name}&surname=${surname}`)
+      return await fetch(`https://mspdeployment.ew.r.appspot.com/name?name=${name}&surname=${surname}`)
                 .then(res => res.json());
     },
 
@@ -359,7 +359,7 @@ export default {
           }
         };
 
-        const url = 'http://localhost:3000/payments';
+        const url = 'https://mspdeployment.ew.r.appspot.com/payments';
 
         const method = {
           method: 'POST',
@@ -398,7 +398,7 @@ export default {
               payment_rate: this.paymentRate
           }
         };
-        const url = 'http://localhost:3000/students';
+        const url = 'https://mspdeployment.ew.r.appspot.com/students';
         const method = {
           method: 'POST',
           headers: {
@@ -446,7 +446,7 @@ export default {
           }
         };
 
-        const url = 'http://localhost:3000/lessons';
+        const url = 'https://mspdeployment.ew.r.appspot.com/lessons';
 
         const method = {
           method: 'POST',
@@ -473,9 +473,9 @@ export default {
 
     getAllLessons: async function() {
       if(this.allLessons.length === 0) {
-        const allStudents = await fetch('http://localhost:3000/students').then(res => res.json());
+        const allStudents = await fetch('https://mspdeployment.ew.r.appspot.com/students').then(res => res.json());
 
-        const url = 'http://localhost:3000/lessons';
+        const url = 'https://mspdeployment.ew.r.appspot.com/lessons';
         const allLessons = await fetch(url).then(res => res.json());
 
         allLessons.lessons.forEach(lesson => this.allLessons.push({
@@ -490,9 +490,9 @@ export default {
 
     getAllPayments: async function() {
         if(this.allPayments.length === 0) {
-          const allStudents = await fetch('http://localhost:3000/students').then(res => res.json());
+          const allStudents = await fetch('https://mspdeployment.ew.r.appspot.com/students').then(res => res.json());
 
-          const url = 'http://localhost:3000/payments';
+          const url = 'https://mspdeployment.ew.r.appspot.com/payments';
           const allPayments = await fetch(url).then(res => res.json());
         
           allPayments.payments.forEach(payment => this.allPayments.push({
@@ -502,7 +502,6 @@ export default {
             payment_amount: payment.payment_amount
           }));
         }
-        
     },
 
     getStudentId: async function () {
@@ -512,7 +511,7 @@ export default {
            return this.windowProperties.getFullName = true;
       }
 
-      const response = await fetch(`http://localhost:3000/name?name=${name}&surname=${surname}`)
+      const response = await fetch(`https://mspdeployment.ew.r.appspot.com/name?name=${name}&surname=${surname}`)
                 .then(res => res.json());
             
       if (!response.student) {
@@ -532,11 +531,11 @@ export default {
       if (this.currentStudentId === 0) {
           return this.notFoundStudents.push(this.fullName);
       } else if (this.currentStudentId) {
-          const totalLessons = await fetch(`http://localhost:3000/students/${idWithPaymentRate.currentStudentId}/total-lessons`)
+          const totalLessons = await fetch(`https://mspdeployment.ew.r.appspot.com/students/${idWithPaymentRate.currentStudentId}/total-lessons`)
                     .then(res => res.json())
                     .catch(err => console.log(err));
 
-          const totalPayments = await fetch(`http://localhost:3000/students/${idWithPaymentRate.currentStudentId}/total-payments`)
+          const totalPayments = await fetch(`https://mspdeployment.ew.r.appspot.com/students/${idWithPaymentRate.currentStudentId}/total-payments`)
                     .then(res => res.json())
                     .catch(err => console.log(err));
 
