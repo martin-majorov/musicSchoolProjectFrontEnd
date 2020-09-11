@@ -279,9 +279,6 @@ export default {
             payment_rate: currentPaymentRate
           }
         }
-
-        console.log(data);
-        console.log(newNameObj.id);
         
         const url = `https://mspdeployment.ew.r.appspot.com/students/${newNameObj.id}`;
 
