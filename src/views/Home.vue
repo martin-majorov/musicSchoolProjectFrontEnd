@@ -227,7 +227,6 @@ export default {
           }
         }
 
-        console.log(data);
         //update url
         const url = `https://mspdeployment.ew.r.appspot.com/lessons/${lessonId}`;
 
