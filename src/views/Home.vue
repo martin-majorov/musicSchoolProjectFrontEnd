@@ -104,6 +104,17 @@ export default {
 
   methods: {
 
+    getStudentIdFromDatabase: async function(student) {
+      let name = student[0];
+      let surname = student[1];
+
+      const response = await fetch(`https://mspdeployment.ew.r.appspot.com/name?name=${name}&surname=${surname}`)
+                .then(res => res.json())
+                .then(json => {return json.student._id});
+
+      return response;
+    },
+
     callStudentInfo: async function(student) {
         this.student.firstName = student.name;
         this.student.lastName = student.surname;
@@ -137,11 +148,20 @@ export default {
             payment.payment_amount = Number(newPaymentAmount);
           }
         })
+
+        // filters the name and surname of the lesson attender. It is nescessary because in backend,
+        // we have student.id parameter to update the lesson data and there is no other way than retrieve it from DB by using name and surname.
+        const nameSurnameArray = this.allPayments.filter(payment => payment.id === paymentId)[0].name.split(" ");
+
+        //uses the async function "getStudentIdFromDatabase" to get the ID. Function needs a [name, surname] in the input.
+        // function is async, because of the request to DB, so it needs to have await before using the value.
+        const thisPaymentsStudentId = this.getStudentIdFromDatabase(nameSurnameArray);
         
         // if validation is passed, updates the database payment record
         // data object for update request
         const data = {
           payment: {
+            student_id: await thisPaymentsStudentId,
             date: newPaymentDate,
             payment_amount: Number(newPaymentAmount)
           }
@@ -190,13 +210,24 @@ export default {
           }
         })
 
+        // filters the name and surname of the lesson attender. It is nescessary because in backend,
+        // we have student.id parameter to update the lesson data and there is no other way than retrieve it from DB by using name and surname.
+        const nameSurnameArray = this.allLessons.filter(lesson => lesson.id === lessonId)[0].name.split(" ");
+
+        //uses the async function "getStudentIdFromDatabase" to get the ID. Function needs a [name, surname] in the input.
+        // function is async, because of the request to DB, so it needs to have await before using the value.
+        const thisLessonStudentId = this.getStudentIdFromDatabase(nameSurnameArray);
+        
         // data object for update request
         const data = {
           lesson: {
+            student_id: await thisLessonStudentId,
             date: newLessonDate,
             lesson_length: newLessonLength
           }
         }
+
+        console.log(data);
         //update url
         const url = `https://mspdeployment.ew.r.appspot.com/lessons/${lessonId}`;
 
@@ -209,6 +240,8 @@ export default {
         }
 
         fetch(url, method);
+
+        
       }
     },
 
@@ -227,11 +260,14 @@ export default {
         this.warningMessage.switch = true;
       } else {
 
+        let currentPaymentRate;
+
         //updates local name object
         this.currentStudentsList.forEach(student => {
           if(student.id === newNameObj.id) {
             student.name = newName[0].trim();
             student.surname = newName[1].trim();
+            currentPaymentRate = student.paymentRate;
           }
         })
 
@@ -239,11 +275,15 @@ export default {
         const data = {
           student: {
             name: newName[0],
-            surname: newName[1]
+            surname: newName[1],
+            payment_rate: currentPaymentRate
           }
         }
+
+        console.log(data);
+        console.log(newNameObj.id);
         
-        const url = `https://mspdeployment.ew.r.appspot.com/students/${newNameObj.id}/editname`;
+        const url = `https://mspdeployment.ew.r.appspot.com/students/${newNameObj.id}`;
 
         const method = {
           method: 'PUT',
@@ -353,7 +393,7 @@ export default {
 
         const data = {
           payment: {
-            student_id: response.student.id,
+            student_id: response.student._id,
             date: this.customDateFormat,
             payment_amount: this.paymentAmount
           }
@@ -373,10 +413,10 @@ export default {
           .then(res => res.json());
 
         this.newPayment.push({
-          id: confirm.payment.id,
+          id: confirm._id,
           name: this.fullName,
-          date: confirm.payment.date,
-          paymentAmount: confirm.payment.payment_amount
+          date: confirm.date,
+          paymentAmount: confirm.paymentAmount
         });
         this.windowProperties.newPayment = true;
 
@@ -409,7 +449,7 @@ export default {
 
         const response = await fetch(url, method)
           .then(res => res.json());
-        this.newStudent.push(response.student);
+        this.newStudent.push(response);
         this.windowProperties.newStudent = true;
 
         } else {
@@ -440,7 +480,7 @@ export default {
 
         const data = {
           lesson: {
-            student_id: response.student.id,
+            student_id: response.student._id,
             date: this.customDateFormat,
             lesson_length: 45
           }
@@ -460,10 +500,10 @@ export default {
           .then(res => res.json());
 
         this.newLesson.push({
-          id: confirm.lesson.id,
+          id: confirm._id,
           name: this.fullName,
-          date: confirm.lesson.date,
-          length: confirm.lesson.lesson_length
+          date: confirm.date,
+          length: confirm.lessonLength
         });
 
         this.windowProperties.newLesson = true;
@@ -478,11 +518,12 @@ export default {
         const url = 'https://mspdeployment.ew.r.appspot.com/lessons';
         const allLessons = await fetch(url).then(res => res.json());
 
+
         allLessons.lessons.forEach(lesson => this.allLessons.push({
-            id: lesson.id,
-            name: `${allStudents.students.filter(student => student.id == lesson.student_id)[0].name} ${allStudents.students.filter(student => student.id == lesson.student_id)[0].surname}`,
+            id: lesson._id, // changed to be compatible with MongoDB
+            name: `${allStudents.students.filter(student => student._id === lesson.studentId)[0].name} ${allStudents.students.filter(student => student._id === lesson.studentId)[0].surname}`,
             date: lesson.date,
-            lesson_length: lesson.lesson_length
+            lesson_length: lesson.lessonLength
           }));
       }
         
@@ -496,10 +537,10 @@ export default {
           const allPayments = await fetch(url).then(res => res.json());
         
           allPayments.payments.forEach(payment => this.allPayments.push({
-            id: payment.id,
-            name: `${allStudents.students.filter(student => student.id == payment.student_id)[0].name} ${allStudents.students.filter(student => student.id == payment.student_id)[0].surname}`,
+            id: payment._id,
+            name: `${allStudents.students.filter(student => student._id === payment.studentId)[0].name} ${allStudents.students.filter(student => student._id === payment.studentId)[0].surname}`,
             date: payment.date,
-            payment_amount: payment.payment_amount
+            payment_amount: payment.paymentAmount
           }));
         }
     },
@@ -518,7 +559,7 @@ export default {
           this.notFoundStudents.push(this.fullName);
       } else {
           return {
-            currentStudentId: response.student.id,
+            currentStudentId: response.student._id,
             currentStudentRate: response.student.payment_rate
           };
       }

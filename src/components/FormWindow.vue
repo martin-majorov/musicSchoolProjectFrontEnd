@@ -152,9 +152,10 @@ export default {
             if (this.currentStudentsList.length === 0) {
                 response.students.forEach(student => {
                     this.currentStudentsList.push({
-                        id: student.id, // edit student._id key for MongoDB. For SQLite backend use student.id
+                        id: student._id, // edit student._id key for MongoDB. For SQLite backend use student.id
                         name: student.name,
-                        surname: student.surname
+                        surname: student.surname,
+                        paymentRate: student.payment_rate
                     });
                 })
             }
