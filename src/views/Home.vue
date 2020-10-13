@@ -108,9 +108,9 @@ export default {
       let name = student[0];
       let surname = student[1];
 
-      const response = await fetch(`https://mspdeployment.ew.r.appspot.com/name?name=${name}&surname=${surname}`)
+      const response = await fetch(`http://localhost:8080/students/name/${name}&${surname}`)
                 .then(res => res.json())
-                .then(json => {return json.student._id});
+                .then(json => {return json.student.id});
 
       return response;
     },
@@ -160,14 +160,12 @@ export default {
         // if validation is passed, updates the database payment record
         // data object for update request
         const data = {
-          payment: {
-            student_id: await thisPaymentsStudentId,
+            studentId: await thisPaymentsStudentId,
             date: newPaymentDate,
-            payment_amount: Number(newPaymentAmount)
-          }
+            paymentAmount: Number(newPaymentAmount)
         }
         //update url
-        const url = `https://mspdeployment.ew.r.appspot.com/payments/${paymentId}`;
+        const url = `http://localhost:8080/payments/${paymentId}`;
 
 
         //update method
@@ -220,15 +218,13 @@ export default {
         
         // data object for update request
         const data = {
-          lesson: {
-            student_id: await thisLessonStudentId,
+            studentId: await thisLessonStudentId,
             date: newLessonDate,
-            lesson_length: newLessonLength
-          }
+            lessonLength: newLessonLength
         }
 
         //update url
-        const url = `https://mspdeployment.ew.r.appspot.com/lessons/${lessonId}`;
+        const url = `http://localhost:8080/lessons/${lessonId}`;
 
 
         //update method
@@ -272,14 +268,12 @@ export default {
 
         //updates database
         const data = {
-          student: {
             name: newName[0],
             surname: newName[1],
-            payment_rate: currentPaymentRate
-          }
+            paymentRate: currentPaymentRate
         }
         
-        const url = `https://mspdeployment.ew.r.appspot.com/students/${newNameObj.id}`;
+        const url = `http://localhost:8080/students/${newNameObj.id}`;
 
         const method = {
           method: 'PUT',
@@ -294,7 +288,7 @@ export default {
     },
 
     deleteStudent: async function(id) {
-      const url = `https://mspdeployment.ew.r.appspot.com/students/${id}`;
+      const url = `http://localhost:8080/students/${id}`;
       const method = {
           method: 'DELETE',
         };
@@ -306,7 +300,7 @@ export default {
     },
 
     deletePayment: async function(id) {
-      const url = `https://mspdeployment.ew.r.appspot.com/payments/${id}`;
+      const url = `http://localhost:8080/payments/${id}`;
       const method = {
           method: 'DELETE',
         };
@@ -317,7 +311,7 @@ export default {
     },
     
     deleteLesson: async function(id) {
-      const url = `https://mspdeployment.ew.r.appspot.com/lessons/${id}`;
+      const url = `http://localhost:8080/lessons/${id}`;
       const method = {
           method: 'DELETE',
         };
@@ -361,8 +355,11 @@ export default {
     checkDublicateStudent: async function () {
       const name = this.student.firstName;
       const surname = this.student.lastName;
-      return await fetch(`https://mspdeployment.ew.r.appspot.com/name?name=${name}&surname=${surname}`)
-                .then(res => res.json());
+      return await fetch(`http://localhost:8080/students/name/${name}&${surname}`)
+                .then(res => res.json())
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
     },
 
     createPayment: async function ()   {
@@ -388,14 +385,12 @@ export default {
         }
 
         const data = {
-          payment: {
-            student_id: response.student._id,
+            studentId: response.student.id,
             date: this.customDateFormat,
-            payment_amount: this.paymentAmount
-          }
+            paymentAmount: this.paymentAmount
         };
 
-        const url = 'https://mspdeployment.ew.r.appspot.com/payments';
+        const url = 'http://localhost:8080/payments/';
 
         const method = {
           method: 'POST',
@@ -409,7 +404,7 @@ export default {
           .then(res => res.json());
 
         this.newPayment.push({
-          id: confirm._id,
+          id: confirm.id,
           name: this.fullName,
           date: confirm.date,
           paymentAmount: confirm.paymentAmount
@@ -421,20 +416,24 @@ export default {
     
     createStudent: async function () {
       const studentExists = await this.checkDublicateStudent();
-      if(studentExists.student) {
+
+
+      console.log(studentExists);
+
+      if(studentExists) {
         return this.warningMessage = {
           switch: true,
           text: "The student already exists!"
         }
       } else if (this.student.firstName && this.student.lastName && this.paymentRate) {
           const data = {
-          student: {
               name: this.student.firstName,
               surname: this.student.lastName,
-              payment_rate: this.paymentRate
-          }
+              payment_rate: this.paymentRate,
+              active: true
         };
-        const url = 'https://mspdeployment.ew.r.appspot.com/students';
+
+        const url = 'http://localhost:8080/students/';
         const method = {
           method: 'POST',
           headers: {
@@ -475,14 +474,12 @@ export default {
         }
 
         const data = {
-          lesson: {
-            student_id: response.student._id,
+            studentId: response.student.id,
             date: this.customDateFormat,
-            lesson_length: 45
-          }
+            lessonLength: 45
         };
 
-        const url = 'https://mspdeployment.ew.r.appspot.com/lessons';
+        const url = 'http://localhost:8080/lessons/';
 
         const method = {
           method: 'POST',
@@ -496,7 +493,7 @@ export default {
           .then(res => res.json());
 
         this.newLesson.push({
-          id: confirm._id,
+          id: confirm.id,
           name: this.fullName,
           date: confirm.date,
           length: confirm.lessonLength
@@ -509,16 +506,15 @@ export default {
 
     getAllLessons: async function() {
       if(this.allLessons.length === 0) {
-        const allStudents = await fetch('https://mspdeployment.ew.r.appspot.com/students').then(res => res.json());
+        const allStudents = await fetch('http://localhost:8080/students/').then(res => res.json());
 
-        const url = 'https://mspdeployment.ew.r.appspot.com/lessons';
+        const url = 'http://localhost:8080/lessons/';
         const allLessons = await fetch(url).then(res => res.json());
 
-
         allLessons.lessons.forEach(lesson => this.allLessons.push({
-            id: lesson._id, // changed to be compatible with MongoDB
-            name: `${allStudents.students.filter(student => student._id === lesson.studentId)[0].name} ${allStudents.students.filter(student => student._id === lesson.studentId)[0].surname}`,
-            date: lesson.date,
+            id: lesson.id, // changed to be compatible with MongoDB
+            name: `${allStudents.students.filter(student => student.id === lesson.studentId)[0].name} ${allStudents.students.filter(student => student.id === lesson.studentId)[0].surname}`,
+            date: lesson.date.split(" ")[0],
             lesson_length: lesson.lessonLength
           }));
       }
@@ -527,15 +523,15 @@ export default {
 
     getAllPayments: async function() {
         if(this.allPayments.length === 0) {
-          const allStudents = await fetch('https://mspdeployment.ew.r.appspot.com/students').then(res => res.json());
+          const allStudents = await fetch('http://localhost:8080/students/').then(res => res.json());
 
-          const url = 'https://mspdeployment.ew.r.appspot.com/payments';
+          const url = 'http://localhost:8080/payments/';
           const allPayments = await fetch(url).then(res => res.json());
         
           allPayments.payments.forEach(payment => this.allPayments.push({
-            id: payment._id,
-            name: `${allStudents.students.filter(student => student._id === payment.studentId)[0].name} ${allStudents.students.filter(student => student._id === payment.studentId)[0].surname}`,
-            date: payment.date,
+            id: payment.id,
+            name: `${allStudents.students.filter(student => student.id === payment.studentId)[0].name} ${allStudents.students.filter(student => student.id === payment.studentId)[0].surname}`,
+            date: payment.date.split(" ")[0],
             payment_amount: payment.paymentAmount
           }));
         }
@@ -548,14 +544,14 @@ export default {
            return this.windowProperties.getFullName = true;
       }
 
-      const response = await fetch(`https://mspdeployment.ew.r.appspot.com/name?name=${name}&surname=${surname}`)
+      const response = await fetch(`http://localhost:8080/students/name/${name}&${surname}`)
                 .then(res => res.json());
             
       if (!response.student) {
           this.notFoundStudents.push(this.fullName);
       } else {
           return {
-            currentStudentId: response.student._id,
+            currentStudentId: response.student.id,
             currentStudentRate: response.student.payment_rate
           };
       }
@@ -566,18 +562,35 @@ export default {
       this.currentStudentId = idWithPaymentRate.currentStudentId;
             
       if (this.currentStudentId === 0) {
+
           return this.notFoundStudents.push(this.fullName);
       } else if (this.currentStudentId) {
-          const totalLessons = await fetch(`https://mspdeployment.ew.r.appspot.com/students/${idWithPaymentRate.currentStudentId}/total-lessons`)
+          const totalLessons = await fetch(`http://localhost:8080/students/${idWithPaymentRate.currentStudentId}/total-lessons`)
                     .then(res => res.json())
                     .catch(err => console.log(err));
 
-          const totalPayments = await fetch(`https://mspdeployment.ew.r.appspot.com/students/${idWithPaymentRate.currentStudentId}/total-payments`)
+          const totalPayments = await fetch(`http://localhost:8080/students/${idWithPaymentRate.currentStudentId}/total-payments`)
                     .then(res => res.json())
                     .catch(err => console.log(err));
 
-          const totalPaymentsNumber = Number(totalPayments.totalPayments.total_payments);
-          const totalLessonsNumber = Number(totalLessons.totalLessons.total_lessons);
+          let totalPaymentsNumber;
+          let totalLessonsNumber;
+
+          if(totalPayments) {
+            totalPaymentsNumber = Number(totalPayments.totalPayments.total_payments);
+          } else {
+            totalPaymentsNumber = 0;
+          }
+        
+
+          if(totalLessons) {
+            totalLessonsNumber = Number(totalLessons.totalLessons.total_lessons);
+          } else {
+            totalLessonsNumber = 0;
+          }
+
+          console.log(totalPaymentsNumber);
+
           const currentStudentRate = Number(idWithPaymentRate.currentStudentRate);
 
           const lessonsLeft = (totalPaymentsNumber / currentStudentRate) - totalLessonsNumber;
