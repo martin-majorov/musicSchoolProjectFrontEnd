@@ -36,6 +36,8 @@
                         <div class="add-lesson-payment">
                             <label for="amount">Payment</label>
                             <select class="input" name="amount" id="payment-amount" v-model="amount" v-on:change="$emit('chosenAmount', amount)">
+                                <option value="15">5 Eur</option>
+                                <option value="15">10 Eur</option>
                                 <option value="15">15 Eur</option>
                                 <option value="20">20 Eur</option>
                                 <option value="25">25 Eur</option>
@@ -146,16 +148,17 @@ export default {
 
     // shows all students in the database by  array to the array to be viewed
         getAllStudentsList: async function () {
-            const response = await fetch('https://mspdeployment.ew.r.appspot.com/students')
+            const response = await fetch('http://localhost:8080/students/')
                 .then(res => res.json());
 
             if (this.currentStudentsList.length === 0) {
                 response.students.forEach(student => {
                     this.currentStudentsList.push({
-                        id: student._id, // edit student._id key for MongoDB. For SQLite backend use student.id
+                        id: student.id, // edit student._id key for MongoDB. For SQLite backend use student.id
                         name: student.name,
                         surname: student.surname,
-                        paymentRate: student.payment_rate
+                        paymentRate: student.payment_rate,
+                        active: student.active
                     });
                 })
             }

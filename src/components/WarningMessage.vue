@@ -1,5 +1,5 @@
 <template>
-    <div class="student-not-found">{{ warningMessage }}</div>
+    <div id="warning" class="student-not-found">{{ warningMessage }}</div>
 </template>
 
 <script>
@@ -10,3 +10,14 @@ export default {
 
 }
 </script>
+
+<style>
+
+    #warning {
+        font-family: 'Roboto', sans-serif;
+        font-style: italic;
+        font-size: 15px;
+        color: white;
+    }
+
+</style>

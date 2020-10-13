@@ -135,7 +135,6 @@ export default {
     border-color: white;
     border: 1px;
     border-radius: 5px;
-    border-style: dashed;
     margin: 30px;
 }
 
